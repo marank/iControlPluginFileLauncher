@@ -25,14 +25,23 @@ namespace iControlPluginFileLauncher {
             }
         }
 
+        private string Path = AppDomain.CurrentDomain.BaseDirectory + "\\exec";
+
+        public bool Init() {
+            if (!System.IO.Directory.Exists(Path)) {
+                System.IO.Directory.CreateDirectory(Path);
+            }
+
+            return true;
+        }
 
         public void Handle(string[] commands, string ip) {
-            foreach (string path in System.IO.Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory + "\\exec")) {
-                System.IO.FileInfo file = new System.IO.FileInfo(path);
+            foreach (string file in System.IO.Directory.GetFiles(Path)) {
+                System.IO.FileInfo fi = new System.IO.FileInfo(file);
 
-                if (System.IO.Path.GetFileNameWithoutExtension(path).Equals(commands[0])) {
-                    System.Diagnostics.Process.Start(path, String.Join(" ", commands, 1, commands.Length - 1));
-                    pluginHost.Log("Launched " + path, this);
+                if (System.IO.Path.GetFileNameWithoutExtension(file).Equals(commands[0])) {
+                    System.Diagnostics.Process.Start(file, String.Join(" ", commands, 1, commands.Length - 1));
+                    pluginHost.Log("Launched " + file, this);
                 }
             }
         }
