@@ -30,8 +30,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="iControlPluginInterface">
-      <HintPath>..\..\iControlServerApplication\iControlPluginInterface\bin\Debug\iControlPluginInterface.dll</HintPath>
+    <Reference Include="iControlInterfaces">
+      <HintPath>..\..\iControlServerApplication\iControlInterfaces\bin\Debug\iControlInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
