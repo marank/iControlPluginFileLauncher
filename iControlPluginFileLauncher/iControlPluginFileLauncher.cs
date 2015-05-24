@@ -33,7 +33,7 @@ namespace iControlPluginFileLauncher {
                 System.IO.Directory.CreateDirectory(Path);
             }
 
-            string configFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins", "iControlPluginPowerManagement.config");
+            string configFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins", "iControlPluginFileLauncher.config");
             if (System.IO.File.Exists(configFile)) {
                 Dictionary<string, string> settings = pluginHost.DeserializeJSON(configFile);
                 bool value;
