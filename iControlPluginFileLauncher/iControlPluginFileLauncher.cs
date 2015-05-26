@@ -14,7 +14,7 @@ namespace iControlPluginFileLauncher {
         }
         public string Author {
             get {
-                return "Matthias Rank";
+                return "marank <development@m-rank.de>";
             }
         }
         public string Version {
