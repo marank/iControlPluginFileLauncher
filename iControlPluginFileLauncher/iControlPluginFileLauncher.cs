@@ -12,36 +12,40 @@ namespace iControlPluginFileLauncher {
                 return "FileLauncher";
             }
         }
-
         public string Author {
             get {
                 return "Matthias Rank";
             }
         }
-
-        private IiControlPluginHost pluginHost;
-        public IiControlPluginHost Host {
-            set {
-                pluginHost = value;
-            }
+        public string Version {
             get {
-                return pluginHost;
+                return "0.0.1";
             }
         }
 
-        private string Path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "exec");
+        private IiControlPluginHost _pluginHost;
+        public IiControlPluginHost Host {
+            set {
+                _pluginHost = value;
+            }
+            get {
+                return _pluginHost;
+            }
+        }
+
+        private string _execpath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "exec");
+        private string _configpath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins", "iControlPluginFileLauncher.config");
+        private Dictionary<string, object> _settings;
 
         public bool Init() {
-            if (!System.IO.Directory.Exists(Path)) {
-                System.IO.Directory.CreateDirectory(Path);
+            if (!System.IO.Directory.Exists(_execpath)) {
+                System.IO.Directory.CreateDirectory(_execpath);
             }
 
-            string configFile = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins", "iControlPluginFileLauncher.config");
-            if (System.IO.File.Exists(configFile)) {
-                Dictionary<string, string> settings = pluginHost.DeserializeJSON(configFile);
-                bool value;
-                if (settings.ContainsKey("enabled") && Boolean.TryParse(settings["enabled"], out value) && value == false) {
-                    pluginHost.Log("Plugin disabled", this);
+            if (System.IO.File.Exists(_configpath)) {
+                _settings = Host.DeserializeJSON(_configpath);
+                if (_settings.ContainsKey("enabled") && Convert.ToBoolean(_settings["enabled"]) == false) {
+                    _pluginHost.Log("Plugin disabled", this);
                     return false;
                 }
             }
@@ -53,12 +57,12 @@ namespace iControlPluginFileLauncher {
             if (commands[0] == "launch") {
                 NetworkStream clientStream = client.TCP.GetStream();
                 ASCIIEncoding encoder = new ASCIIEncoding();
-                foreach (string file in System.IO.Directory.GetFiles(Path)) {
+                foreach (string file in System.IO.Directory.GetFiles(_execpath)) {
                     System.IO.FileInfo fi = new System.IO.FileInfo(file);
 
                     if (System.IO.Path.GetFileNameWithoutExtension(file).Equals(commands[1]) || System.IO.Path.GetFileName(file).Equals(commands[1])) {
                         System.Diagnostics.Process.Start(file, String.Join(" ", commands, 2, commands.Length - 2));
-                        pluginHost.Log("Launched " + file, this);
+                        Host.Log("Launched " + file, this);
                         byte[] buffer = encoder.GetBytes("Launched " + file);
                         clientStream.Write(buffer, 0, buffer.Length);
                         clientStream.Flush();
